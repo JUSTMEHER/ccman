@@ -1,43 +1,24 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-<html>
-<head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <meta http-equiv="Content-Style-Type" content="text/css">
-  <title></title>
-  <meta name="Generator" content="Cocoa HTML Writer">
-  <meta name="CocoaVersion" content="2113.65">
-  <style type="text/css">
-    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
-    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
-  </style>
-</head>
-<body>
-<p class="p1">name: Build iOS IPA</p>
-<p class="p2"><br></p>
-<p class="p1">on:</p>
-<p class="p1"><span class="Apple-converted-space">  </span>push:</p>
-<p class="p1"><span class="Apple-converted-space">    </span>branches: [ main ]</p>
-<p class="p2"><br></p>
-<p class="p1">jobs:</p>
-<p class="p1"><span class="Apple-converted-space">  </span>build:</p>
-<p class="p1"><span class="Apple-converted-space">    </span>runs-on: macos-latest</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>steps:</p>
-<p class="p1"><span class="Apple-converted-space">      </span>- uses: actions/checkout@v3</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">      </span>- name: Build Archive</p>
-<p class="p1"><span class="Apple-converted-space">        </span>run: |</p>
-<p class="p1"><span class="Apple-converted-space">          </span>xcodebuild \</p>
-<p class="p1"><span class="Apple-converted-space">          </span>-scheme CCManager \</p>
-<p class="p1"><span class="Apple-converted-space">          </span>-configuration Release \</p>
-<p class="p1"><span class="Apple-converted-space">          </span>-archivePath $PWD/build/CCManager.xcarchive \</p>
-<p class="p1"><span class="Apple-converted-space">          </span>archive</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">      </span>- name: Export IPA</p>
-<p class="p1"><span class="Apple-converted-space">        </span>run: |</p>
-<p class="p1"><span class="Apple-converted-space">          </span>xcodebuild -exportArchive \</p>
-<p class="p1"><span class="Apple-converted-space">          </span>-archivePath $PWD/build/CCManager.xcarchive \</p>
-<p class="p1"><span class="Apple-converted-space">          </span>-exportOptionsPlist ExportOptions.plist \</p>
-<p class="p1"><span class="Apple-converted-space">          </span>-exportPath $PWD/build</p>
-</body>
-</html>
+name: iOS Build
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Show Xcode version
+        run: xcodebuild -version
+
+      - name: Build app
+        run: |
+          xcodebuild \
+          -scheme CCManager \
+          -destination 'platform=iOS Simulator,name=iPhone 15' \
+          clean build
